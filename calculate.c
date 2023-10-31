@@ -64,7 +64,7 @@ int calculate(Stack **ready, double x, double *result) {
       if (tmp_2 != 0) {
         tmp_1 = number->value;
         pop_node(&number);
-        tmp_res = tmp_1 % tmp_2;
+        tmp_res = fmod(tmp_1, tmp_2);
         push_node(&number, tmp_res, get_priority(Number), Number);
       } else {
         flag_error_math = 1;
