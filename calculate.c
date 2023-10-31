@@ -125,7 +125,7 @@ int calculate(Stack **ready, double x, double *result) {
     }
     if (peek_node(*ready) == 16 && !flag_error_math) {
       tmp_1 = number->value;
-      if (tmp_1 >= -1 && tmp_1 <= 1) {
+      if (fmod(tmp_1, M_PI/2) > 1e-8 && fmod(tmp_1, M_PI/2) < -1e-8) {
         pop_node(&number);
         tmp_res = atan(tmp_1);
         push_node(&number, tmp_res, get_priority(Number), Number);
