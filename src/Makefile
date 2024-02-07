@@ -18,10 +18,10 @@ Calc: *.c *.h
 	$(CC) $(CFLAGS) *.c *.h -o calculator $(TEST_LIBS)
 
 style: 
-	clang-format -n *c *h
+	clang-format -style=Google -n *c *h
 
 do_style: 
-	clang-format -i *c *h
+	clang-format -style=Google -i *c *h
 	
 clean: 
 	rm -rf *.o *.a calculator
