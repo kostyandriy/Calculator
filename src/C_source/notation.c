@@ -95,7 +95,7 @@ void second_part_notation(Stack **origin, Stack **result, Stack **support,
   // ---------------СТЕПЕНЬ---------------------
   if (peek_node(*origin) == 10) {
     while (peek_node(*support) != 0 &&
-           (*support)->priority >= get_priority(op_power)) {
+           (*support)->priority > get_priority(op_power)) {
       push_node(result, (*support)->value, (*support)->priority,
                 (*support)->type);
       pop_node(support);

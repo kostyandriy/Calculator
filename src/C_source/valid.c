@@ -44,7 +44,7 @@ int brackets_par(char *input) {
   return res;
 }
 
-int brackets_valid_in(char *input, int i) {
+int brackets_valid_in(char *input, size_t i) {
   int res = 0;
   i += 1;
   if (input[i] != '\0' &&
@@ -63,7 +63,7 @@ int is_bracket(char symbol) {
 }
 
 // -------------------------------операторы----------------------------------
-int is_operator(char *input, int *i, int offset) {
+int is_operator(char *input, size_t *i, int offset) {
   int res = 0;
   int exist_mod = 0;
   int exist_operator = 0;
@@ -71,7 +71,6 @@ int is_operator(char *input, int *i, int offset) {
     if (input[*i + 1] == 'o' && input[*i + 2] == 'd') {
       exist_mod = 1;
       *i += 3 - offset;
-      // res = 2;
     }
   }
   if ((input[*i] == '+') || (input[*i] == '-') || (input[*i] == '*') ||
@@ -87,9 +86,9 @@ int is_operator(char *input, int *i, int offset) {
 int valid_after_operator(char *input) {
   int res = 0;
   int flag_er = 0;
-  int len = strlen(input);
-  for (int i = 0; i < len && !flag_er; i++) {
-    if (is_operator(input, &i, 0)) {
+  size_t len = strlen(input);
+  for (size_t i = 0; i < len && !flag_er; i++) {
+    if (is_operator(input, &i, 0) == 2) {
       if (!(input[i] != '\0' &&
             (is_number(input[i]) || input[i] == '(' || funcs(input, &i, 0) ||
              input[i] == 'x' || is_dot(input, i)))) {
@@ -101,12 +100,27 @@ int valid_after_operator(char *input) {
   return res;
 }
 
+int valid_after_mod(char *input) {
+  int res = 0;
+  int flag_er = 0;
+  for (size_t i = 0; i < strlen(input); i++) {
+    if (is_operator(input, &i, 0) == 1) {
+      if (!(input[i] != '\0' && input[i] != '-' &&
+            (is_number(input[i]) || input[i] == '(' || funcs(input, &i, 0) ||
+             input[i] == 'x' || is_dot(input, i))))
+        flag_er = 1;
+    }
+  }
+  if (!flag_er) res = 1;
+  return res;
+}
+
 int valid_mul(char *input) {
   int res = 0;
-  int len = (strlen(input));
+  size_t len = (strlen(input));
   int flag_simple = 0;
   int flag_complex = 0;
-  for (int i = 0; i < len && !flag_simple && !flag_complex; i++) {
+  for (size_t i = 0; i < len && !flag_simple && !flag_complex; i++) {
     if (!valid_simple_mul(input, i)) flag_simple = 1;
 
     if (!valid_complex_mul(input, &i)) flag_complex = 1;
@@ -116,7 +130,7 @@ int valid_mul(char *input) {
   return res;
 }
 
-int valid_simple_mul(char *input, int i) {
+int valid_simple_mul(char *input, size_t i) {
   int res = 0;
   int flag_er = 0;
   if (is_x(input[i])) {
@@ -140,10 +154,10 @@ int valid_simple_mul(char *input, int i) {
   return res;
 }
 
-int valid_complex_mul(char *input, int *i) {
+int valid_complex_mul(char *input, size_t *i) {
   int res = 0;
   int flag_er = 0;
-  int k = *i;
+  size_t k = *i;
   if (funcs(input, i, 1)) {
     if (k != 0) {
       if (is_number(input[k - 1]) || is_dot(input, k - 1) ||
@@ -159,7 +173,7 @@ int valid_complex_mul(char *input, int *i) {
 int valid_start(char *input) {
   int res = 0;
   int flag_er = 0;
-  int i = 0;
+  size_t i = 0;
   if (input[i] == '^' || input[i] == '*' || input[i] == '/') flag_er = 1;
   if (is_operator(input, &i, 0) == 1) flag_er = 1;
   if (!flag_er) res = 1;
@@ -198,7 +212,7 @@ int is_dot(char *input, int i) {
 int is_x(char symbol) { return (symbol == 'x'); }
 
 //----------------------------функции-------------------------------------
-int trigonometry(char *input, int *i, int offset) {
+int trigonometry(char *input, size_t *i, int offset) {
   int res = 0;
   if (input[*i] == 's' && strlen(input) - *i - 1 >= 2) {
     if (input[*i + 1] == 'i' && input[*i + 2] == 'n') {
@@ -221,7 +235,7 @@ int trigonometry(char *input, int *i, int offset) {
   return res;
 }
 
-int funcs(char *input, int *i, int offset) {
+int funcs(char *input, size_t *i, int offset) {
   int res = 0;
   int tmp = 0;
   if (input[*i] == 'l') {
@@ -257,8 +271,8 @@ int funcs(char *input, int *i, int offset) {
 int bracket_after_func(char *input) {
   int res = 0;
   int flag_non_bracket = 0;
-  int len = strlen(input);
-  for (int i = 0; i < len; i++) {
+  size_t len = strlen(input);
+  for (size_t i = 0; i < len; i++) {
     if (funcs(input, &i, 0) != 0) {
       if (input[i] != '(') {
         flag_non_bracket = 1;
@@ -281,9 +295,10 @@ int valid_input(char *input) {
   int flag_valid_number = 0;
   int flag_valid_mul = 0;
   int flag_valid_start = 0;
-  int len = strlen(input);
+  int flag_after_mod = 0;
+  size_t len = strlen(input);
 
-  for (int i = 0;
+  for (size_t i = 0;
        i < len && !flag_symb && !(input[i] == '\n' || input[i] == '\0'); i++) {
     if (!(is_number(input[i]) || funcs(input, &i, 1) != 0 || is_dot(input, i) ||
           is_x(input[i]) || is_operator(input, &i, 1) != 0 ||
@@ -291,6 +306,7 @@ int valid_input(char *input) {
       flag_symb = 1;
     }
   }
+
   if (!brackets_par(input)) flag_brackets = 1;
 
   if (!valid_after_operator(input)) flag_operators = 1;
@@ -303,9 +319,12 @@ int valid_input(char *input) {
 
   if (!valid_start(input)) flag_valid_start = 1;
 
+  if (!valid_after_mod(input)) flag_after_mod = 1;
+
   if (!flag_symb && !flag_brackets && !flag_operators &&
       !flag_brackets_after_func && !flag_valid_number && !flag_valid_mul &&
-      !flag_valid_start)
+      !flag_valid_start && !flag_after_mod)
     res = 1;
+
   return res;
 }

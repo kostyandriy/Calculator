@@ -1,11 +1,16 @@
-#ifndef S_CALC_H
-#define S_CALC_H
+#ifndef CALC_H
+#define CALC_H
+
+// #ifdef __cplusplus
+// extern "C" {
+// #endif
 
 #include <math.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #define MAX_SIZE_STRING 256
+#define M_PI 3.14159265358979323846
 
 typedef enum type_t {
   Number = 1,
@@ -37,26 +42,28 @@ typedef struct Stack {
 } Stack;
 
 int valid_input(char *input);
-
 void trim_input(char *input, char *result);
-
 int brackets_par(char *input);
+int brackets_valid_in(char *input, size_t i);
 int is_bracket(char symbol);
-int brackets_valid_in(char *input, int i);
 int bracket_after_func(char *input);
 
-int is_operator(char *input, int *i, int offset);
+int is_operator(char *input, size_t *i, int offset);
 int valid_after_operator(char *input);
+int valid_after_mod(char *input);
 int valid_mul(char *input);
-int valid_simple_mul(char *input, int i);
-int valid_complex_mul(char *input, int *i);
+int valid_simple_mul(char *input, size_t i);
+int valid_complex_mul(char *input, size_t *i);
+int valid_start(char *input);
 
-int funcs(char *input, int *i, int offset);
-int trigonometry(char *input, int *i, int offset);
+int funcs(char *input, size_t *i, int offset);
+int trigonometry(char *input, size_t *i, int offset);
 
 int is_dot(char *input, int i);
 int is_x(char symbol);
 int is_number(char symbol);
+int valid_number(char *input);
+// int valid_x(char *input);
 
 void push_node(Stack **head, double value, int priority, my_type type);
 void pop_node(Stack **head);
@@ -65,12 +72,12 @@ void remove_node(Stack **head);
 
 int get_priority(my_type type);
 int get_type_simple(char symbol);
-int get_type_complex(char *input, int *i);
+int get_type_complex(char *input, size_t *i);
 
-void stack_from_str(Stack **node, char *input);
-void simple_symbols(Stack **node, char symbol);
-void complex_symbols(Stack **node, char *input, int *i);
-void number_symbols(Stack **node, char *input, int *i);
+void stack_from_str(Stack **node, char *input, double x);
+void simple_symbols(Stack **node, char symbol, double x);
+void complex_symbols(Stack **node, char *input, size_t *i);
+void number_symbols(Stack **node, char *input, size_t *i);
 void inverse_stack(Stack **input, Stack **result);
 
 void first_part_notation(Stack **origin, Stack **result, Stack **support,
@@ -79,4 +86,18 @@ void second_part_notation(Stack **origin, Stack **result, Stack **support,
                           int *k);
 void notation_stack(Stack **origin, Stack **result, Stack **support);
 
-#endif  // S_CALC_H
+int calculate(Stack **ready, double *result);
+void calculate_1(Stack **ready, Stack **number, int *flag_error_math);
+void calculate_2(Stack **ready, Stack **number, int *flag_error_math);
+void calculate_3(Stack **ready, Stack **number, int *flag_error_math);
+void calculate_4(Stack **ready, Stack **number, int *flag_error_math);
+int final_func(char *input, double *calculated, double x);
+
+double per_month_ann(double sum, double precent, int time);
+double per_month_diff(double sum, double precent, int time, double *total);
+
+// #ifdef __cplusplus
+// }
+// #endif
+
+#endif  // CALC_H

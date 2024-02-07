@@ -1,8 +1,8 @@
 #include "Calc.h"
 
-void stack_from_str(Stack **node, char *input) {
-  for (int i = 0; input[i] != '\0'; i++) {
-    simple_symbols(node, input[i]);
+void stack_from_str(Stack **node, char *input, double x) {
+  for (size_t i = 0; input[i] != '\0'; i++) {
+    simple_symbols(node, input[i], x);
     complex_symbols(node, input, &i);
     number_symbols(node, input, &i);
   }
@@ -32,7 +32,7 @@ int get_type_simple(char symbol) {
   return res;
 }
 
-int get_type_complex(char *input, int *i) {
+int get_type_complex(char *input, size_t *i) {
   int res = 0;
   int func = funcs(input, i, 1);
   if (is_operator(input, i, 1) == 1) res = 9;
@@ -48,17 +48,18 @@ int get_type_complex(char *input, int *i) {
   return res;
 }
 
-void simple_symbols(Stack **node, char symbol) {
+void simple_symbols(Stack **node, char symbol, double x) {
   int type = get_type_simple(symbol);
-  if (type != 0) push_node(node, 0, get_priority(type), type);
+  if (type != 0 && type != 2) push_node(node, 0, get_priority(type), type);
+  if (type == 2) push_node(node, x, get_priority(type), type);
 }
 
-void complex_symbols(Stack **node, char *input, int *i) {
+void complex_symbols(Stack **node, char *input, size_t *i) {
   int type = get_type_complex(input, i);
   if (type != 0) push_node(node, 0, get_priority(type), type);
 }
 
-void number_symbols(Stack **node, char *input, int *i) {
+void number_symbols(Stack **node, char *input, size_t *i) {
   double res = 0;
   if (is_number(input[*i]) || is_dot(input, *i)) {
     res = atof(input + *i);

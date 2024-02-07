@@ -1,29 +1,28 @@
 CC = gcc
-CFLAGS = -Wall -Werror -Wextra
+CFLAGS = -Wall -Werror -Wextra -std=c11
 GCOVFLAGS = -fprofile-arcs -ftest-coverage
-TEST_LIBS = -lcheck -lm
-HEADER = Calc.h
+SRC = C_source/*c
+HEADER = C_source/*h
 OS = $(shell uname)
 
 ifeq ($(OS), Darwin)
-	TEST_LIBS = -lcheck -lm
+	TEST_LIBS=-lcheck
+	EXE_FILE=SmartCalc.app
 else
-	TEST_LIBS = -lcheck -lsubunit -lpthread -lrt -lm -D_GNU_SOURCE
+	TEST_LIBS=-lcheck -lsubunit -pthread -lcheck_pic -lrt -lm
+	EXE_FILE=SmartCalc
 endif
-
 
 all: Calc 
 
-Calc: *.c *.h
-	$(CC) $(CFLAGS) *.c *.h -o calculator $(TEST_LIBS)
+Calc: 
+	$(CC) $(CFLAGS) $(SRC) $(HEADER) -o calculator $(TEST_LIBS)
 
-style: 
-	clang-format -style=Google -n *c *h
+clean:
+	rm -rf calculator
 
-do_style: 
-	clang-format -style=Google -i *c *h
-	
-clean: 
-	rm -rf *.o *.a calculator
+do_style:
+	clang-format -style=Google -i C_source/*c C_source/*h
 
-rebuild: clean all
+check_style:
+	clang-format -style=Google -n C_source/*c C_source/*h
